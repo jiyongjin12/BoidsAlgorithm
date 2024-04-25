@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class BridUnit : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public float speed;
+    Boids myBoids;
+
+    public void InitializeUnit(Boids _boids, float _speed)
     {
-        
+        myBoids = _boids;
+        speed = _speed;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        this.transform.position += this.transform.forward * speed;
     }
 }

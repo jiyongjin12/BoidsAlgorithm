@@ -366,6 +366,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3392606762849542334, guid: 5d12b9fc483cbcd43bb8f8e5d701b349, type: 3}
+      propertyPath: speed
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6159055627005268739, guid: 5d12b9fc483cbcd43bb8f8e5d701b349, type: 3}
       propertyPath: m_Name
       value: BridUnit
