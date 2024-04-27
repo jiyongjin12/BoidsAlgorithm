@@ -110,7 +110,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a6e3b1363783e740952b35bfc1bbdc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 5
+  obstacleDistance: 10
+  FOVAngle: 120
+  maxNeighbourCount: 10
+  neighbourDistance: 6
+  neighbours: []
   boidUnitLayer:
     serializedVersion: 2
     m_Bits: 128

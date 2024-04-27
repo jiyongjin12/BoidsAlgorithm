@@ -262,8 +262,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bridUnitPrefab: {fileID: 3392606762849542334, guid: 5d12b9fc483cbcd43bb8f8e5d701b349, type: 3}
-  bridCount: 100
-  spawnRange: 30
+  bridCount: 1000
+  spawnRange: 20
+  speedRange: {x: 5, y: 10}
+  cohesionWeight: 1.5
+  alignmentWeight: 3
+  separationWeight: 1
+  boundsWeight: 10
+  egoWeight: 1
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
