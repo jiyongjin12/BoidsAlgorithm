@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Boids : MonoBehaviour
 {
+    [SerializeField] public GameObject W;
+
     [SerializeField] private BridUnit bridUnitPrefab; 
     [SerializeField] public float spawnRange = 30; // 소환 범위
     [SerializeField] public Vector2 speedRange;
@@ -15,6 +17,8 @@ public class Boids : MonoBehaviour
 
     public float boundsWeight = 1; // 경계 가중치
     public float egoWeight = 1; // 개인 이동 가중치
+
+    public float obstacleWeight = 10;
 
     private void Start()
     {

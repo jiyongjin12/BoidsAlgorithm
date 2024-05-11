@@ -9,6 +9,8 @@ public class BridUnit : MonoBehaviour
     Vector3 egoVec;
     Boids myBoids;
 
+    float additionSpeed = 0;
+
     [SerializeField] float obstacleDistance;
     [SerializeField] float FOVAngle; // 시아각
     [SerializeField] float maxNeighbourCount; // 최대 이웃 수 
@@ -18,7 +20,7 @@ public class BridUnit : MonoBehaviour
     List<BridUnit> neighbours = new List<BridUnit>();
 
     [SerializeField] LayerMask boidUnitLayer; // 무리 이웃 확인
-    // [SerializeField] LayerMask obstacleLeyer; // 장애물 확인
+    [SerializeField] LayerMask obstructLeyer; // 장애물 확인
     // float additionalSpeed;
 
     Coroutine findNeighbourCoroutin; // 주변 이웃 찾기 코루틴
@@ -29,29 +31,33 @@ public class BridUnit : MonoBehaviour
         myBoids = _boids;
         speed = _speed;
 
-        findNeighbourCoroutin = StartCoroutine("FindNeighbourCoroutine");
+        findNeighbourCoroutin = StartCoroutine("FindNeighborCoroutine");
         calculateEgoVectorCorutine = StartCoroutine("CalculateEgoVectorCoroutine");
     }
 
     private void Update()
     {
+        if (additionSpeed > 0)
+            additionSpeed -= Time.deltaTime;
+
         Vector3 cohesionVec = CalculateCohesionVector() * myBoids.cohesionWeight; // 응집
         Vector3 alignmentVec = CalculateAlignmentVector() * myBoids.alignmentWeight; // 정렬
         Vector3 separationVec = CalculateSeparationVector() * myBoids.separationWeight; // 분리
 
         Vector3 boundVec = CalculateBoundsVector() * myBoids.boundsWeight; // 범위 지정 
         Vector3 egoVecter = egoVec * myBoids.egoWeight; // 개인 이동
+        
+        Vector3 obstacleVec = CalculateObstructVector() * myBoids.obstacleWeight;
 
-        targetVec = cohesionVec + alignmentVec + separationVec + boundVec + egoVecter; // 목표 백터 계산
+        targetVec = cohesionVec + alignmentVec + separationVec + boundVec + egoVecter + obstacleVec ; // 목표 백터 계산
 
         targetVec = Vector3.Lerp(this.transform.forward, targetVec, Time.deltaTime);
         targetVec = targetVec.normalized;
 
-        if (targetVec == Vector3.zero)
-            targetVec = egoVec;
+        
 
         this.transform.rotation = Quaternion.LookRotation(targetVec);
-        this.transform.position += targetVec * speed * Time.deltaTime;
+        this.transform.position += targetVec * (speed + additionSpeed) * Time.deltaTime;
     }
 
     IEnumerator CalculateEgoVectorCoroutine() // 개인 이동 코루틴
@@ -62,7 +68,7 @@ public class BridUnit : MonoBehaviour
         calculateEgoVectorCorutine = StartCoroutine("CalculateEgoVectorCoroutine"); // 재시작
     }
 
-    IEnumerator FindNeighbourCoroutine() // 주변 이웃 찾기 코루틴
+    IEnumerator FindNeighborCoroutine() // 주변 이웃 찾기 코루틴
     {
         neighbours.Clear(); // 리스트 초기화
 
@@ -79,7 +85,7 @@ public class BridUnit : MonoBehaviour
             }
         }
         yield return new WaitForSeconds(Random.Range(0.5f, 2f));
-        findNeighbourCoroutin = StartCoroutine("FindNeighbourCoroutine"); // 재시작
+        findNeighbourCoroutin = StartCoroutine("FindNeighborCoroutine"); // 재시작
     }
 
     //private void FindNeighbour()
@@ -158,7 +164,21 @@ public class BridUnit : MonoBehaviour
 
     private Vector3 CalculateBoundsVector() // 범위
     {
-        Vector3 offsetToCenter = myBoids.transform.position - transform.position;
+        Vector3 offsetToCenter = myBoids.W.transform.position - transform.position;
         return offsetToCenter.magnitude >= myBoids.spawnRange ? offsetToCenter.normalized : Vector3.zero;
+    }
+
+    private Vector3 CalculateObstructVector()
+    {
+        Vector3 ObstructVec = Vector3.zero;
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, transform.forward, out hit, obstacleDistance, obstructLeyer))
+        {
+            Debug.DrawLine(transform.position, hit.point, Color.blue);
+            ObstructVec = hit.normal;
+            additionSpeed = 10;
+        }
+
+        return ObstructVec;
     }
 }
